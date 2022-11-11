@@ -5,6 +5,18 @@ inputs:
   where-to:
     description: Where this deployment will be sent
     required: true
+  host:
+    description: The host this deployment will be sent to
+    required: true
+  username:
+    description: The username on the host
+    required: true
+  key:
+    description: The private key used connect to the host
+    required: true
+  path:
+    description: The base path on the host the deployment will go
+    required: true
 runs:
   using: composite
   steps:
@@ -24,17 +36,17 @@ runs:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
       uses: appleboy/scp-action@v0.1.3
       with:
-        host: ${{ secrets.DEPLOYMENT_HOST }}
-        username: ${{ secrets.DEPLOYMENT_USERNAME }}
-        key: ${{ secrets.DEPLOYMENT_KEY }}
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        key: ${{ inputs.key }}
         source: "${{ steps.current-time.outputs.formattedTime }}.tgz"
-        target: "${{ secrets.DEPLOYMENT_PATH }}/deploys"
+        target: "${{ inputs.path }}/deploys"
     - name: Run release script on ${{ inputs.where-to }}
       env:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
       uses: appleboy/ssh-action@v0.1.5
       with:
-        host: ${{ secrets.DEPLOYMENT_HOST }}
-        username: ${{ secrets.DEPLOYMENT_USERNAME }}
-        key: ${{ secrets.DEPLOYMENT_KEY }}
-        script: "${{ secrets.DEPLOYMENT_PATH }}/release.sh ${{ steps.current-time.outputs.formattedTime }}"
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        key: ${{ inputs.key }}
+        script: "${{ inputs.path }}/release.sh ${{ steps.current-time.outputs.formattedTime }}"
