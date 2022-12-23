@@ -34,7 +34,7 @@ runs:
       shell: bash
       env:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
-      run: tar -zcf ${TIMESTAMP}.tgz -C ${{ inputs.bundle-directory }} --exclude-from exclude-on-deploy-files.txt .
+      run: tar -zcf ${TIMESTAMP}.tgz -C ${{ inputs.bundle-directory }} --exclude-from exclude-on-deploy-files.txt *
     - name: Transfer Bundle to ${{ inputs.where-to }} Server
       env:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
