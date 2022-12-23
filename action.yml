@@ -17,6 +17,10 @@ inputs:
   path:
     description: The base path on the host the deployment will go
     required: true
+  bundle-directory:
+    description: The root directory to be bundled for deployment
+    required: false
+    default: .
 runs:
   using: composite
   steps:
@@ -30,7 +34,7 @@ runs:
       shell: bash
       env:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
-      run: tar -zcf ${TIMESTAMP}.tgz -C ./dist .
+      run: tar -zcf ${TIMESTAMP}.tgz -C ${{ inputs.bundle-directory }} --exclude-from exclude-on-deploy-files.txt .
     - name: Transfer Bundle to ${{ inputs.where-to }} Server
       env:
         TIMESTAMP: "${{ steps.current-time.outputs.formattedTime }}"
